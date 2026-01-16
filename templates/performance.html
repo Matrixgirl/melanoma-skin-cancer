@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Model Performance</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            margin: 0;
+            padding: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #111112;
+        }
+        .performance-table {
+            width: 100%;
+            max-width: 1000px;
+            margin: 30px auto;
+            border-collapse: collapse;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .performance-table th, .performance-table td {
+            padding: 12px 15px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        .performance-table th {
+            background-color: #3498db;
+            color: white;
+        }
+        .performance-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .chart-container {
+            width: 90%;
+            max-width: 800px;
+            margin: 40px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Model Performance Comparison</h1>
+
+    <table class="performance-table">
+        <tr>
+            <th>Model</th>
+            <th>Accuracy</th>
+            <th>Precision</th>
+            <th>Recall</th>
+            <th>F1-Score</th>
+        </tr>
+        <tr>
+            <td>CNN</td>
+            <td>92%</td>
+            <td>91%</td>
+            <td>90%</td>
+            <td>90.5%</td>
+        </tr>
+        <tr>
+            <td>ANN</td>
+            <td>81%</td>
+            <td>79%</td>
+            <td>78.87%</td>
+            <td>75%</td>
+        </tr>
+        <tr>
+            <td>Classification</td>
+            <td>71%</td>
+            <td>69%</td>
+            <td>69.2%</td>
+            <td>68%</td>
+        </tr>
+    </table>
+
+    <div class="chart-container">
+        <canvas id="performanceChart"></canvas>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        const performanceChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['CNN', 'ANN', 'Classification'],
+                datasets: [
+                    {
+                        label: 'Accuracy',
+                        data: [92, 87, 84],
+                        backgroundColor: 'rgba(52, 152, 219, 0.6)'
+                    },
+                    {
+                        label: 'Precision',
+                        data: [91, 85, 82],
+                        backgroundColor: 'rgba(46, 204, 113, 0.6)'
+                    },
+                    {
+                        label: 'Recall',
+                        data: [90, 86, 83],
+                        backgroundColor: 'rgba(241, 196, 15, 0.6)'
+                    },
+                    {
+                        label: 'F1-Score',
+                        data: [90.5, 85.5, 82.5],
+                        backgroundColor: 'rgba(231, 76, 60, 0.6)'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Performance Metrics of Models'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            stepSize: 10
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

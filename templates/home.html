@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skin Detection Dashboard</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+        }
+
+        .welcome-bar {
+            background-color: rgb(12, 12, 12);
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .welcome-bar a {
+            color: #ffd700;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .welcome-bar a:hover {
+            text-decoration: underline;
+        }
+
+        .dashboard {
+            background-color: rgb(151, 151, 203);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .dashboard h1 {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .input-section, .output-section {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+            height: 400px;
+            background-color: #f9f9f9;
+        }
+
+        .input-section h2, .output-section h2 {
+            margin-top: 0;
+            color: #555;
+        }
+
+        #image-preview {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin-top: 10px;
+        }
+
+        #file-input {
+            margin-bottom: 10px;
+        }
+
+        #result-preview {
+            max-width: 100%;
+            height: 300px;
+            display: block;
+            margin-top: 10px;
+        }
+
+        #loading-indicator {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+            color: blue;
+        }
+
+        #prediction-text {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        #progress-bar {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        #progress-bar-fill {
+            width: 0%;
+            height: 20px;
+            background-color: #4CAF50;
+            border-radius: 5px;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+
+        <!-- Welcome bar with username and logout -->
+        <div class="welcome-bar">
+            <div>Welcome, {{ username }}!</div>
+            <div><a href="{{ url_for('logout') }}">Logout</a></div>
+        </div>
+
+        <!-- Skin Detection Dashboard -->
+        <div class="dashboard">
+            <h1>Skin Detection Model Dashboard</h1>
+
+            <div class="input-section">
+                <center><h2>Input Image</h2></center>
+                <input type="file" id="file-input" accept="image/*">
+                <img id="image-preview" src="#" alt="Image Preview" style="display: none;">
+                <button onclick="processImage()">Detect Skin</button>
+                <div id="loading-indicator">Processing...</div>
+                <div id="progress-bar"><div id="progress-bar-fill"></div></div>
+                <div id="error-message" class="error-message"></div>
+            </div>
+
+            <div class="output-section">
+                <center><h2>Output Result</h2></center>
+                <img id="result-preview" src="#" alt="Result Preview" style="display: none;">
+                <div id="prediction-text"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const imagePreview = document.getElementById('image-preview');
+        const resultPreview = document.getElementById('result-preview');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const predictionText = document.getElementById('prediction-text');
+        const progressBar = document.getElementById('progress-bar');
+        const progressBarFill = document.getElementById('progress-bar-fill');
+        const errorMessage = document.getElementById('error-message');
+        const simulationTime = 3000;
+
+        fileInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    errorMessage.textContent = '';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.src = '#';
+                imagePreview.style.display = 'none';
+            }
+        });
+
+        async function processImage() {
+            const file = fileInput.files[0];
+            if (!file) {
+                errorMessage.textContent = 'Please select an image.';
+                return;
+            }
+
+            if (!file.type.startsWith('image/')) {
+                errorMessage.textContent = 'Invalid file type. Please select an image.';
+                return;
+            }
+
+            loadingIndicator.style.display = 'block';
+            resultPreview.style.display = 'none';
+            predictionText.textContent = '';
+            progressBar.style.display = 'block';
+            errorMessage.textContent = '';
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                progressBarFill.style.width = progress + '%';
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        loadingIndicator.style.display = 'none';
+                        progressBar.style.display = 'none';
+                        resultPreview.src = imagePreview.src;
+                        resultPreview.style.display = 'block';
+                        predictionText.textContent = 'Skin Detected (Simulated Result)';
+                    }, 500);
+                }
+            }, simulationTime / 10);
+        }
+    </script>
+</body>
+</html>

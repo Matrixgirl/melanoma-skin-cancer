@@ -1,0 +1,16 @@
+# Virtual environment
+venv/
+__pycache__/
+
+# ML artifacts
+dataset/
+*.h5
+*.pt
+*.onnx
+
+# Notebooks
+*.ipynb
+
+# OS files
+.DS_Store
+Thumbs.db

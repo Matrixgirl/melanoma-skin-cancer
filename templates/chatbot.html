@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Melanoma AI Chatbot</title>
+    <style>
+        
+
+html, body {
+    height: 100%;
+    width: 100%;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #3498db, #2c3e50);
+    flex-direction: column;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+        #chat-container {
+            background: white;
+            width: 350px;
+            height: 420px;
+            margin: auto;
+            padding: 15px;
+            border: 1px solid #ccc;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        #messages {
+            height: 350px;
+            overflow-y: auto;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            text-align: left;
+        }
+
+        .message {
+            margin: 5px 0;
+            padding: 8px;
+            border-radius: 5px;
+        }
+
+        .user {
+            background: #77b4f1;
+            text-align: right;
+        }
+
+        .bot {
+            background: #c3e6cb;
+            text-align: left;
+        }
+
+        input {
+            width: 70%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px;
+            background: blue;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background: darkblue;
+        }
+    </style>
+</head>
+<body>
+
+    <center><h1>Melanoma AI Chatbot</h1></center>
+    <div id="chat-container">
+        <div id="messages"></div>
+        <input type="text" id="userInput" placeholder="Ask about melanoma..." />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        function sendMessage() {
+            let userInput = document.getElementById("userInput").value;
+            let messagesDiv = document.getElementById("messages");
+
+            if (userInput.trim() === "") return;
+
+            messagesDiv.innerHTML += `<div class="message user"><strong>You:</strong> ${userInput}</div>`;
+
+            let botReply = getBotResponse(userInput);
+            setTimeout(() => {
+                messagesDiv.innerHTML += `<div class="message bot"><strong>AI Doctor:</strong> ${botReply}</div>`;
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }, 500);
+
+            document.getElementById("userInput").value = "";
+        }
+
+        function getBotResponse(input) {
+            input = input.toLowerCase();
+
+            if (input.includes("melanoma")) {
+                return "Melanoma is a type of skin cancer that can spread to other organs if not treated early.";
+            } else if (input.includes("symptoms")) {
+                return "Melanoma symptoms include new or changing moles, irregular borders, multiple colors, and bleeding.";
+            } else if (input.includes("causes")) {
+                return "Melanoma is caused by excessive exposure to UV rays from the sun or tanning beds.";
+            } else if (input.includes("prevention")) {
+                return "You can prevent melanoma by wearing sunscreen, avoiding tanning beds, and covering your skin in direct sunlight.";
+            } else if (input.includes("treatment")) {
+                return "Melanoma treatment includes surgery, radiation therapy, immunotherapy, and targeted therapy.";
+            } else if (input.includes("dangerous")) {
+                return "Yes, melanoma can be life-threatening if it spreads to other parts of the body.";
+            } else {
+                return "I'm not sure, but you should consult a dermatologist for proper diagnosis.";
+            }
+        }
+    </script>
+
+</body>
+</html>

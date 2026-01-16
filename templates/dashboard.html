@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Skin Detection Dashboard</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .dashboard {
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            padding: 30px;
+            width: 90%;
+            max-width: 1000px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        .input-section, .output-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .input-section h2, .output-section h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #file-input {
+            display: block;
+            margin: 0 auto 10px;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+            margin: 10px auto;
+        }
+
+        button {
+            display: block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        #progress-bar {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        #progress-bar-fill {
+            height: 20px;
+            background-color: #4CAF50;
+            border-radius: 5px;
+            width: 0%;
+        }
+
+        #prediction-text {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .top-bar {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logout-button {
+            padding: 8px 16px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            background-color: #c0392b;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="top-bar">
+            <h1>Welcome, {{ username }}!</h1>
+            <!-- Separate logout form -->
+            <form action="/logout" method="get">
+                <button type="submit" class="logout-button">Logout</button>
+            </form>
+        </div>
+
+        <!-- Upload Section -->
+        <div class="input-section">
+            <h2>Upload Image</h2>
+            <form method="POST" enctype="multipart/form-data">
+                <input type="file" name="file" id="file-input" accept="image/*" required>
+                <button type="submit">Process Image</button>
+            </form>
+            {% if image_url %}
+                <img src="{{ image_url }}" alt="Uploaded Image">
+            {% endif %}
+        </div>
+
+        <!-- Prediction Output -->
+        <div class="output-section">
+            <h2>Prediction Output</h2>
+            {% if prediction %}
+                <p id="prediction-text">
+                    Prediction: {{ prediction }}<br>
+                    Confidence: {{ '{:.2f}'.format(confidence * 100) }}%
+                </p>
+                <img src="{{ image_url }}" alt="Result Image">
+            {% else %}
+                <p id="prediction-text">No prediction yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
